@@ -1,15 +1,1 @@
-build/
-*.o
 asd
-
-/tmp/asd/
-cache/
-logs/
-db/
-
-*.swp
-*.swo
-.vscode/
-.idea/
-
-.DS_Store
