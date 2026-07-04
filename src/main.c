@@ -5,7 +5,7 @@
 #include <unistd.h>
 #include <dirent.h>
 
-#define SERVER_URL "https://raw.githubusercontent.com/Loxsete/asd-ports/main"
+#define SERVER_URL "https://raw.githubusercontent.com/Loxsete/plpkg-ports/main"
 #define DOWNLOAD_BASE "/tmp/plpkg-cache"
 #define UNPACK_BASE "/tmp/plpkg-unpack"
 #define INSTALLED_DB "/etc/plpkgbase.bd"
