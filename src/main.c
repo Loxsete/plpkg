@@ -236,17 +236,75 @@ void build_package(const char *category, const char *name)
     system(clean_cmd);
 }
 
+void print_usage(const char *prog)
+{
+    printf("plpkg package manager\n\n");
+    printf("Usage:\n");
+    printf("  %s install <category>/<name>   Install a package\n", prog);
+    printf("  %s help                        Show this help\n", prog);
+    printf("\nExample:\n");
+    printf("  %s install net-misc/curl\n", prog);
+}
+
+int split_category_name(const char *arg, char *category, size_t cat_len, char *name, size_t name_len)
+{
+    const char *slash = strchr(arg, '/');
+    if (!slash) {
+        return 0;
+    }
+
+    size_t cat_size = slash - arg;
+    if (cat_size == 0 || cat_size >= cat_len) {
+        return 0;
+    }
+
+    strncpy(category, arg, cat_size);
+    category[cat_size] = '\0';
+
+    const char *name_part = slash + 1;
+    if (strlen(name_part) == 0 || strlen(name_part) >= name_len) {
+        return 0;
+    }
+
+    strncpy(name, name_part, name_len - 1);
+    name[name_len - 1] = '\0';
+
+    return 1;
+}
+
+
 int main(int argc, char *argv[])
 {
-    printf("hello world\n");
-
-    if (argc < 3) 
-    {
-        printf("\nUsage: %s <category> <package_name>\n", argv[0]);
-        printf("Example: %s net-misc curl\n", argv[0]);
+    if (argc < 2) {
+        print_usage(argv[0]);
         return 1;
     }
 
-    build_package(argv[1], argv[2]);
-    return 0;
+    if (strcmp(argv[1], "help") == 0 || strcmp(argv[1], "-h") == 0 || strcmp(argv[1], "--help") == 0) {
+        print_usage(argv[0]);
+        return 0;
+    }
+
+    if (strcmp(argv[1], "install") == 0) {
+        if (argc < 3) {
+            printf("Error: missing package argument\n");
+            print_usage(argv[0]);
+            return 1;
+        }
+
+        char category[128];
+        char name[128];
+
+        if (!split_category_name(argv[2], category, sizeof(category), name, sizeof(name))) {
+            printf("Error: invalid package format, expected <category>/<name>\n");
+            return 1;
+        }
+
+        build_package(category, name);
+        return 0;
+    }
+
+    printf("Error: unknown command '%s'\n", argv[1]);
+    print_usage(argv[0]);
+    return 1;
 }
